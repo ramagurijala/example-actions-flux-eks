@@ -3,10 +3,15 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: aws-example-octodex
+  labels:
+    app: aws-example-octodex
   annotations:
     fluxcd.io/automated: "true"
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: aws-example-octodex
   strategy:
     rollingUpdate:
       maxSurge: 1
