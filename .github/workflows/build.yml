@@ -37,17 +37,28 @@ jobs:
         aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 713154802630.dkr.ecr.eu-west-2.amazonaws.com
 
     - name: Build and tag the image
-      run: |
+    #  run: |
         # Build and tag the image
-        docker build \
-          -t $CONTAINER_IMAGE \
-          -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$CONTAINER_IMAGE ./app
+    #    docker build \
+    #     -t $CONTAINER_IMAGE \
+    #     -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$CONTAINER_IMAGE ./app
            
     # Add additional steps here like scanning of image
 
     # Only push to registry on master
-    - name: Push
-      if: github.ref == 'refs/heads/master'
-      run: |
-        # Push image to AWS ECR
-        docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$CONTAINER_IMAGE
+    #- name: Push
+    #  if: github.ref == 'refs/heads/master'
+    #  run: |
+    #    # Push image to AWS ECR
+    #    docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$CONTAINER_IMAGE
+    
+    # Push the docker image to the Amazon ECR repo
+    - name: Push build image to ECR
+      id: build-image-to-ecr
+      uses: jwalton/gh-ecr-push@v1
+      with:
+        access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        region: eu-west-2
+        local-image: ${CONTAINER_IMAGE}
+        image: ${CONTAINER_IMAGE}
